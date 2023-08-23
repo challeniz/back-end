@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Request, Delete } from '@nestjs/common';
 import { UsersService } from '../service/users.service';
 import { User } from '../schema/user.schema';
 import { ObjectId } from 'mongoose';
@@ -16,7 +16,7 @@ export class UsersController {
   }
 
   // 이메일 중복 확인
-  @Get('/check')
+  @Post('/check')
   async doubleCheck(@Body('email') email: string) {
     return this.usersService.doubleCheck(email);
   }
@@ -28,20 +28,24 @@ export class UsersController {
     return this.authService.jwtLogin(loginUserDto);
   }
 
-  
-  @Get('/mypage')
-  async findOne(@Param('id') id: ObjectId) {
-    
-  }
-  
-
-  @Patch(':id')
-  async update(@Param('id') id: ObjectId) {
-    return this.usersService.update(id);
-  }
-
-  @Delete(':id')
-  async remove(@Param('id') id: ObjectId) {
+  // 회원 탈퇴
+  @Delete('/withdrawal/:id')
+  async withdrawal(@Param('id') id: ObjectId) {
+    // param이 아니라 token에서 가져와야하나..
     return this.usersService.remove(id);
   }
+
+  // 
+  @Get('/mypageChall')
+  async mypage(@Request() req) {
+    
+    return this.usersService.mypageChall(req.user);
+  }
+
+  @Get('/mypageInfo')
+  async mypageInfo(@Request() req) {
+    
+    return req.user;
+  }
+  
 }

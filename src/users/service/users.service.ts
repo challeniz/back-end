@@ -6,9 +6,8 @@ import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
+  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>,) {}
 
-  // dto를 사용하는 것이 좋을까?
   async create(user: User) {
     const isEmail = user.email;
 
@@ -32,44 +31,27 @@ export class UsersService {
     return user ? true : false;
   }
 
+  async findById(id: string) {
+    const user = await this.userModel.findById(id);
+
+    return user;
+  }
+
   async findByEmail(email: string) {
     const user = await this.userModel.findOne({ email });
 
     return user;
   }
 
-  /*
-  async login(loginUserDto: LoginUserDto) {
-    const user = await this.userModel.findOne({ email: loginUserDto.email });
+  async mypageChall(user: any) {
+    //const challenge = await this.userModel.findById();
 
-    if(!user) {
-      throw new BadRequestException("해당하는 회원이 존재하지 않습니다. 다시 한 번 확인해 주세요.");
-    }
-
-    const passwordMatch = await bcrypt.compare(loginUserDto.password, user.password);
-    console.log(passwordMatch);
-
-    if(!passwordMatch) {
-      throw new BadRequestException("비밀번호가 일치하지 않습니다. 다시 확인해 주세요.");
-    }
-
-    const id = user._id;
-    const authority = user.authority;
-
-    const secretKey = process.env.JWT_SECRET_KEY;
-    //const token = jwt.sign({ id, authority }, secretKey);
-
-    //const loginUser = { token, id, authority };
-
-    //return loginUser;
-  }
-  */
-
-  async update(id: ObjectId) {
-    return `This action updates a #${id} user`;
+    return user;
   }
 
   async remove(id: ObjectId) {
-    return `This action removes a #${id} user`;
+    const result = await this.userModel.deleteOne({ _id: id });
+
+    return result? "회원 탈퇴 완료" : "회원 탈퇴 실패";
   }
 }

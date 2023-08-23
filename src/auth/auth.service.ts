@@ -23,10 +23,8 @@ export class AuthService {
           throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
         }
 
-        const id = user.id;
-        const authority = user.authority;
+        const payload = { sub: user.id, authority: user.authority };
 
-        const secretKey = process.env.JWT_SECRET_KEY;
-        return { token: this.jwtService.sign({ id, authority }) };
+        return { access_token: await this.jwtService.signAsync(payload) };
       }
 }
