@@ -21,6 +21,10 @@ export class ChallengesService {
     return  this.challengeModel.find({});
   }
 
+  async findByUser(id: string) {
+    return this.challengeModel.find({ "users": `${id}` });
+  }
+
   async findOne(id: string) {
     const challenge = await this.challengeModel.findById(id);
     return challenge;
@@ -56,7 +60,7 @@ export class ChallengesService {
     return "수정 완료";
   }
 
-  //Promise<string>쓰나?
+
   async remove(id: string): Promise<string> {
     const now = new Date();
 
@@ -66,7 +70,6 @@ export class ChallengesService {
     const diffDays = Math.floor((challDay.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
     
     if(diffDays <= 0) {
-      // 에러 종류..
       throw new HttpException("챌린지가 시작되었으므로 삭제할 수 없습니다.", HttpStatus.BAD_REQUEST);
     }
 

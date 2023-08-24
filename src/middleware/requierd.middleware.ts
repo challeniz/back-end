@@ -1,8 +1,7 @@
 import { Injectable, NestMiddleware, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { NextFunction } from 'express';
-import { NotFoundError } from 'rxjs';
-import { UsersService } from 'src/users/service/users.service';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class RequiredMiddleware implements NestMiddleware {

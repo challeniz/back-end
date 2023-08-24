@@ -1,12 +1,15 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
-import { User, UserDocument } from '../schema/user.schema';
+import { User, UserDocument } from './schema/user.schema';
 import * as bcrypt from 'bcrypt';
+import { ChallengesService } from 'src/challenges/challenges.service';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>,) {}
+  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>,
+  private readonly challengeService: ChallengesService) {}
 
   async create(user: User) {
     const isEmail = user.email;
@@ -44,14 +47,25 @@ export class UsersService {
   }
 
   async mypageChall(user: any) {
-    //const challenge = await this.userModel.findById();
+    const challenge = await this.challengeService.findByUser(user.id);
 
-    return user;
+    return challenge;
   }
 
-  async remove(id: ObjectId) {
-    const result = await this.userModel.deleteOne({ _id: id });
+  async remove(user: any) {
+    const result = await this.userModel.deleteOne({ _id: user._id });
 
     return result? "회원 탈퇴 완료" : "회원 탈퇴 실패";
+  }
+
+  async updateInfo(user: any, updateUserDto: UpdateUserDto) {
+    const password = updateUserDto.password;
+    updateUserDto.password = await bcrypt.hash(password, 10);
+
+    await this.userModel.updateOne( { _id: user._id }, { $set: updateUserDto });
+
+    const findUser = this.userModel.findById(user._id);
+
+    return findUser;
   }
 }

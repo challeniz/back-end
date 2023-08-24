@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
+import { forwardRef, MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { ChallengesService } from './challenges.service';
 import { ChallengesController } from './challenges.controller';
 import { Challenge, challengeSchema } from './schema/challenge.schema';
@@ -8,7 +8,7 @@ import { UsersModule } from 'src/users/users.module';
 
 @Module({
   imports: [MongooseModule.forFeature([{ name: Challenge.name, schema: challengeSchema }]),
-  UsersModule
+  forwardRef(() => UsersModule)
 ],
   
   controllers: [ChallengesController],

@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Body, Param, Request, Delete } from '@nestjs/common';
-import { UsersService } from '../service/users.service';
-import { User } from '../schema/user.schema';
+import { Controller, Get, Post, Body, Param, Request, Delete, Patch } from '@nestjs/common';
+import { UsersService } from './users.service';
+import { User } from './schema/user.schema';
 import { ObjectId } from 'mongoose';
-import { LoginUserDto } from '../dto/login-user.dto';
+import { LoginUserDto } from './dto/login-user.dto';
 import { AuthService } from 'src/auth/auth.service';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('users')
 export class UsersController {
@@ -29,23 +30,31 @@ export class UsersController {
   }
 
   // 회원 탈퇴
-  @Delete('/withdrawal/:id')
-  async withdrawal(@Param('id') id: ObjectId) {
-    // param이 아니라 token에서 가져와야하나..
-    return this.usersService.remove(id);
+  @Delete('/withdrawal')
+  async withdrawal(@Request() req) {
+    return this.usersService.remove(req.user);
   }
 
-  // 
+  // 회원 챌린지 조회
   @Get('/mypageChall')
   async mypage(@Request() req) {
     
     return this.usersService.mypageChall(req.user);
   }
 
+  // 회원 정보 조회
   @Get('/mypageInfo')
   async mypageInfo(@Request() req) {
+    const { name, phone, email } = req.user;
     
-    return req.user;
+    return { name, phone, email };
+  }
+
+  // 회원 정보 수정
+  @Patch('/mypageInfo')
+  async mypageInfoUpdate(@Request() req, @Body() updateUserDto: UpdateUserDto) {
+    
+    return this.usersService.updateInfo(req.user, updateUserDto);
   }
   
 }
