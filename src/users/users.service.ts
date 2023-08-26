@@ -49,7 +49,9 @@ export class UsersService {
   async mypageChall(user: any) {
     const challenge = await this.challengeService.findByUser(user.id);
 
-    return challenge;
+    const { name, grade } = user;
+
+    return { challenge, name, grade };
   }
 
   async remove(user: any) {

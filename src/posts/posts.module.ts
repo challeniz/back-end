@@ -6,7 +6,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: Post.name, schema: postSchema }])],
+  imports: [MongooseModule.forFeature([{ name: Post.name, schema: postSchema }]), MulterModule.register({ dest: './upload'})],
   controllers: [PostsController],
   providers: [PostsService],
 })

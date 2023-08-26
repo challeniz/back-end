@@ -38,17 +38,24 @@ export class ChallengesController {
     return this.challengesService.remove(id);
   }
 
-  // 챌린지 신청
+  // 챌린지 신청할 때 정보 가져오기
   @Get('/subscription/:id')
   async getsub(@Request() req, @Param('id') id: string) {
 
    return this.challengesService.getsub(req.user, id);
   }
   
+  // 챌린지 신청
   @Patch('/subscription/:id')
   async subscription(@Request() req, @Param('id') id: string) {
 
     return this.challengesService.subscription(req.user, id);
+  }
+
+  // 찜하기
+  @Patch('/zzim/:id')
+  async zzim(@Request() req, @Param('id') id: string) {
+      return this.challengesService.zzim(req.user, id);
   }
 
 }

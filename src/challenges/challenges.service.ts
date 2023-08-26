@@ -1,4 +1,4 @@
-import { Model, ObjectId } from 'mongoose';
+import { Model, ObjectId, Types } from 'mongoose';
 import { HttpException, HttpStatus, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Challenge, ChallengeDocument } from './schema/challenge.schema';
@@ -34,6 +34,7 @@ export class ChallengesService {
     const now = new Date();
     const challenge = await this.challengeModel.findById(id);
 
+
     if(!challenge) {
       throw new NotFoundException("찾는 챌린지가 존재하지 않습니다. 다시 확인해 주세요.");
     }
@@ -46,10 +47,11 @@ export class ChallengesService {
     }
 
     /*
-    if(challenge.user.equals(user._id)) {
+    if(challenge.user.equals(user._id)) { 
       throw new UnauthorizedException("챌린지 생성자만 수정할 수 있습니다.");
     }
     */
+    
 
     challenge.description = updateChallengeDto.description;
     challenge.mainImg = updateChallengeDto.mainImg;
@@ -104,5 +106,31 @@ export class ChallengesService {
     challenge.save();
 
     return "신청 완료";
+  }
+
+  async zzim(user: any, id: string): Promise<string> {
+    const userId= user._id;
+
+    let challenge = await this.challengeModel.findOne({ "_id": `${id}`, "like_users": `${userId}` });
+
+
+    // 찜이 안되어있는 경우
+    if(challenge == null) {
+      const findChall = await this.challengeModel.findOne({ "_id": `${id}`});
+      findChall.like_users.push(user);
+
+      challenge = findChall;
+      console.log(challenge);
+      challenge.save();
+
+      return "찜 완료";
+    }
+
+    // 찜이 되어있는 경우
+    challenge.like_users = challenge.like_users.filter((ele) => !userId.equals(new Types.ObjectId(`${ele}`)) );
+    challenge.save();
+    
+
+    return "찜 취소";
   }
 }
