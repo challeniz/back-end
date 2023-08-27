@@ -16,6 +16,7 @@ export class ChallengesController {
   // 챌린지 목록
   @Get('')
   async findAll() {
+
     return this.challengesService.findAll();
   }
 
@@ -56,6 +57,12 @@ export class ChallengesController {
   @Patch('/zzim/:id')
   async zzim(@Request() req, @Param('id') id: string) {
       return this.challengesService.zzim(req.user, id);
+  }
+
+  // 챌린지 탈퇴
+  @Patch('/cancel/:id')
+  async cancel(@Request() req, @Param('id') id: string) {
+    return this.challengesService.cancel(req.user, id);
   }
 
 }

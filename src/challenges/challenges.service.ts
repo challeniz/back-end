@@ -1,13 +1,16 @@
 import { Model, ObjectId, Types } from 'mongoose';
-import { HttpException, HttpStatus, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { forwardRef, HttpException, HttpStatus, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Challenge, ChallengeDocument } from './schema/challenge.schema';
 import { CreateChallengeDto } from './dto/create-challenge.dto';
 import { UpdateChallengeDto } from './dto/update-challenge.dto';
+import { UsersService } from 'src/users/users.service';
+import { User } from 'src/users/schema/user.schema';
 
 @Injectable()
 export class ChallengesService {
-  constructor(@InjectModel(Challenge.name) private challengeModel: Model<ChallengeDocument>) {}
+  constructor(@InjectModel(Challenge.name) private challengeModel: Model<ChallengeDocument>,
+  @Inject(forwardRef(() => UsersService)) private readonly usersService: UsersService) {}
 
   async create(user: any, createChallengeDto: CreateChallengeDto) {
     const createChall = new this.challengeModel(createChallengeDto);
@@ -18,16 +21,27 @@ export class ChallengesService {
   }
   
   async findAll() {
-    return  this.challengeModel.find({});
+    const ongoingChallenge = await this.challengeModel.find({ "status": "진행 중" });
+
+    const orderByUsersChallenge = await this.challengeModel.find({ "status": "모집 중" }).sort({ "users": -1 }).limit(6);
+
+    let orderByDateChallenge = await this.challengeModel.find({ "status": "모집 중" }).limit(6);
+    orderByDateChallenge.reverse();
+
+    return { ongoingChallenge, orderByUsersChallenge, orderByDateChallenge }
   }
 
   async findByUser(id: string) {
-    return this.challengeModel.find({ "users": `${id}` });
+    return await this.challengeModel.find({ "users": `${id}` });
   }
 
   async findOne(id: string) {
     const challenge = await this.challengeModel.findById(id);
-    return challenge;
+
+    const user = await this.usersService.findById(challenge.user.toString());
+    const name = user.name;
+    const count = challenge.users.length;
+    return { challenge, name, count };
   }
 
   async update(user:any, id: string, updateChallengeDto: UpdateChallengeDto) {
@@ -132,5 +146,30 @@ export class ChallengesService {
     
 
     return "찜 취소";
+  }
+
+  async cancel(user: any, id: string) {
+    const userId = user._id;
+
+    let challenge = await this.challengeModel.findOne({ "_id": `${id}`, "users": `${userId}` });
+    console.log(challenge);
+
+    if(challenge == null) {
+      throw new HttpException("해당하는 챌린지가 없습니다. 다시 확인해 주세요", HttpStatus.BAD_REQUEST);
+    }
+
+    const now = new Date();
+    let challDay = new Date(challenge.start_date);
+
+    const diffDays = Math.floor((challDay.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+    if(diffDays <= 0) {
+      throw new HttpException("챌린지가 시작되었으므로 삭제할 수 없습니다.", HttpStatus.BAD_REQUEST);
+    }
+
+    challenge.users = challenge.users.filter((ele) => !userId.equals(new Types.ObjectId(`${ele}`)) );
+    challenge.save();
+    
+    
+   return "챌린지 신청 취소 완료";
   }
 }

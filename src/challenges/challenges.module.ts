@@ -19,7 +19,8 @@ export class ChallengesModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(RequiredMiddleware).forRoutes({ path: 'challenges/create', method: RequestMethod.POST }, 
     { path: 'challenges/subscription/:id', method: RequestMethod.PATCH }, { path: 'challenges/subscription/:id', method: RequestMethod.GET },
-    { path: 'challenges/:id', method: RequestMethod.PATCH }, { path: 'challenges/zzim/:id', method: RequestMethod.PATCH }
+    { path: 'challenges/:id', method: RequestMethod.PATCH }, { path: 'challenges/zzim/:id', method: RequestMethod.PATCH } ,
+    { path: 'challenges/cancel/:id', method: RequestMethod.PATCH }
     );
   }
 }
