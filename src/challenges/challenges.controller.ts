@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Request, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ChallengesService } from './challenges.service';
 import { CreateChallengeDto } from './dto/create-challenge.dto';
 import { UpdateChallengeDto } from './dto/update-challenge.dto';
@@ -9,15 +10,23 @@ export class ChallengesController {
 
   // 챌린지 생성
   @Post('/create')
-  async create(@Request() req, @Body() createChallengeDto: CreateChallengeDto) {
-    return this.challengesService.create(req.user, createChallengeDto);
+  @UseInterceptors(FileInterceptor('file'))
+  async create(@Request() req, @Body() createChallengeDto: CreateChallengeDto, @UploadedFile() file: Express.Multer.File) {
+
+    return this.challengesService.create(req.user, createChallengeDto, file);
+  }
+
+  // 챌린지 목록 - 메인페이지
+  @Get('')
+  async findMain() {
+
+    return this.challengesService.findAll();
   }
 
   // 챌린지 목록
-  @Get('')
+  @Get('/list') 
   async findAll() {
-
-    return this.challengesService.findAll();
+    return this.challengesService.findList();
   }
 
   // 챌린지 상세
@@ -28,15 +37,16 @@ export class ChallengesController {
 
   // 챌린지 수정
   @Patch(':id')
-  async update(@Request() req, @Param('id') id: string, @Body() updateChallengeDto: UpdateChallengeDto) {
-    return this.challengesService.update(req.user, id, updateChallengeDto);
+  @UseInterceptors(FileInterceptor('file'))
+  async update(@Request() req, @Param('id') id: string, @Body() updateChallengeDto: UpdateChallengeDto, @UploadedFile() file: Express.Multer.File) {
+    return this.challengesService.update(req.user, id, updateChallengeDto, file);
   }
 
   // 챌린지 삭제 + 기간 확인
   @Delete(':id')
-  async remove(@Param('id') id: string) {
+  async remove(@Request() req, @Param('id') id: string) {
 
-    return this.challengesService.remove(id);
+    return this.challengesService.remove(req.user, id);
   }
 
   // 챌린지 신청할 때 정보 가져오기

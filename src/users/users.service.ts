@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
 import { User, UserDocument } from './schema/user.schema';
@@ -9,7 +9,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 @Injectable()
 export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>,
-  private readonly challengeService: ChallengesService) {}
+  @Inject(forwardRef(() => ChallengesService)) private readonly challengeService: ChallengesService) {}
 
   async create(user: User) {
     const isEmail = user.email;
@@ -48,10 +48,11 @@ export class UsersService {
 
   async mypageChall(user: any) {
     const challenge = await this.challengeService.findByUser(user.id);
+    const zzimChallenge = await this.challengeService.findByZzimList(user.id);
 
     const { name, grade } = user;
 
-    return { challenge, name, grade };
+    return { challenge, zzimChallenge, name, grade };
   }
 
   async remove(user: any) {

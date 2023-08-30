@@ -1,7 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IsEmail, IsPhoneNumber, IsString } from 'class-validator';
 import mongoose, { Document  } from 'mongoose';
+import { Post } from 'src/posts/schema/post.schema';
 import { User } from 'src/users/schema/user.schema';
+import { Image } from './image.schema';
 
 export type ChallengeDocument = Challenge & Document;
 
@@ -12,12 +14,12 @@ export class Challenge {
     title: string;
 
     @IsString()
-    @Prop({ required: true, trim: true })
+    @Prop({ required: false, trim: true })
     description: string;
 
     @IsString()
     @Prop({ required: false, trim: true })
-    mainImg: string;
+    mainImg: Image;
 
     @Prop({ required: false, trim: true })
     start_date: Date;
@@ -29,7 +31,7 @@ export class Challenge {
     @Prop({ required: true, trim: true, default: '모집 중'})
     status: string;
 
-    @Prop({ required: true, trim: true })
+    @Prop({ required: false, trim: true })
     tag: Array<String>;
 
     // 개설한 사람
@@ -48,11 +50,16 @@ export class Challenge {
     @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], required: false })
     like_users: Array<User>[];
 
+    // 모집 기간
     @Prop({ required: false, trim: true })
     recru_open_date: Date;
 
     @Prop({ required: false, trim: true })
     recru_end_date: Date;
+
+    // 인증 리스트
+    @Prop({ required: false, trim: true })
+    post: Array<mongoose.Schema.Types.ObjectId>[];
 }
 
 export const challengeSchema = SchemaFactory.createForClass(Challenge);

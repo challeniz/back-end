@@ -45,9 +45,9 @@ export class UsersController {
   // 회원 정보 조회
   @Get('/mypageInfo')
   async mypageInfo(@Request() req) {
-    const { name, phone, email, grade } = req.user;
+    const { _id, name, phone, email, grade } = req.user;
     
-    return { name, phone, email, grade };
+    return { _id, name, phone, email, grade };
   }
 
   // 회원 정보 수정
