@@ -11,7 +11,7 @@ export type PostDocument = Post & Document;
 export class Post {
     @IsString()
     @Prop({ required: true, trim: true })
-    Img: Image;
+    img: string;
 
     @IsString()
     @Prop({ required: true, trim: true })

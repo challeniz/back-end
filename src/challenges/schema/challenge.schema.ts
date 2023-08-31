@@ -19,7 +19,7 @@ export class Challenge {
 
     @IsString()
     @Prop({ required: false, trim: true })
-    mainImg: Image;
+    mainImg: string;
 
     @Prop({ required: false, trim: true })
     start_date: Date;

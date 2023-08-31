@@ -8,10 +8,12 @@ import { RequiredMiddleware } from 'src/middleware/requierd.middleware';
 import { Image, imageSchema } from 'src/challenges/schema/image.schema';
 import { UsersModule } from 'src/users/users.module';
 import { ChallengesModule } from 'src/challenges/challenges.module';
+import { MulterPostConfig } from 'src/middleware/multer.post.config';
 
 @Module({
   imports: [MongooseModule.forFeature([{ name: Post.name, schema: postSchema },
-    { name: Image.name, schema: imageSchema }]), forwardRef(()=> UsersModule), forwardRef(()=> ChallengesModule)],
+    { name: Image.name, schema: imageSchema }]), forwardRef(()=> UsersModule), forwardRef(()=> ChallengesModule), 
+    MulterModule.registerAsync({ useClass: MulterPostConfig })],
   controllers: [PostsController],
   providers: [PostsService],
 })

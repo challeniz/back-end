@@ -1,46 +1,38 @@
-import { Model, ObjectId, Types } from 'mongoose';
+import mongoose, { Model, ObjectId, Types } from 'mongoose';
 import { forwardRef, HttpException, HttpStatus, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Challenge, ChallengeDocument } from './schema/challenge.schema';
 import { CreateChallengeDto } from './dto/create-challenge.dto';
 import { UpdateChallengeDto } from './dto/update-challenge.dto';
 import { UsersService } from 'src/users/users.service';
-import { Image, ImageDocument } from './schema/image.schema';
-import { Post } from 'src/posts/schema/post.schema';
 
 @Injectable()
 export class ChallengesService {
   constructor(@InjectModel(Challenge.name) private challengeModel: Model<ChallengeDocument>,
-  @InjectModel(Image.name) private imageModel: Model<ImageDocument>,
   @Inject(forwardRef(() => UsersService)) private readonly usersService: UsersService) {}
 
   async create(user: any, createChallengeDto: CreateChallengeDto, file: Express.Multer.File) {
     let createChall = await new this.challengeModel(createChallengeDto);
     createChall.user = user._id;
-
-    let image = new this.imageModel();
-    image.data = file.buffer;
-    image.contentType = file.mimetype;
-
-    createChall.mainImg = image;
-
+    
+    createChall.mainImg = file.path;
     const result = await createChall.save();
 
     return result;
   }
   
   async findAll() {
-    const ongoingChallenge = await this.challengeModel.find({ "status": "진행 중" });
+    const ongoingChallenge = await this.challengeModel.find({ "status": "진행 중" }).limit(4);
 
-    const orderByUsersChallenge = await this.challengeModel.find({ "status": "모집 중" }).sort({ "users": -1 }).limit(6);
+    const orderByUsersChallenge = await this.challengeModel.find({ "status": "모집 중" }).sort({ "users": -1 }).limit(4);
 
-    let orderByDateChallenge = await this.challengeModel.find({ "status": "모집 중" }).limit(6);
+    let orderByDateChallenge = await this.challengeModel.find({ "status": "모집 중" }).limit(4);
     orderByDateChallenge.reverse();
 
     return { ongoingChallenge, orderByUsersChallenge, orderByDateChallenge }
   }
 
-
+  
   // 신청한 사람
   async findById(id: string) {
     const challenge = await this.challengeModel.findById(id);
@@ -56,7 +48,7 @@ export class ChallengesService {
   }
 
   async findList() {
-    const challenge = await this.challengeModel.find({});
+    const challenge = await this.challengeModel.find({}).limit(8);
 
     return challenge;
   }
@@ -66,11 +58,12 @@ export class ChallengesService {
   }
 
   async findOne(id: string) {
-    const challenge = await this.challengeModel.findById(id);
+    let challenge = await this.challengeModel.findById(id);
 
     const user = await this.usersService.findById(challenge.user.toString());
     const name = user.name;
     const count = challenge.users.length;
+
     return { challenge, name, count };
   }
 
@@ -97,12 +90,7 @@ export class ChallengesService {
       throw new UnauthorizedException("챌린지 생성자만 수정할 수 있습니다.");
     }
     
-    let image = new this.imageModel();
-    image.data = file.buffer;
-    image.contentType = file.mimetype;
-    
     challenge.description = updateChallengeDto.description;
-    challenge.mainImg = image;
     challenge.tag = updateChallengeDto.tag;
 
     const result = await challenge.save();
@@ -226,7 +214,6 @@ export class ChallengesService {
     if(!challenge) {
       throw new NotFoundException("찾는 챌린지가 존재하지 않습니다. 다시 확인해 주세요.");
     }
-    // 두번 확인할 필요가 있나?
 
     challenge.post.push(createPost._id);
 

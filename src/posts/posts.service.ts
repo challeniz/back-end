@@ -4,17 +4,12 @@ import { InjectModel } from '@nestjs/mongoose';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { Post, PostDocument } from './schema/post.schema';
-import { Image, ImageDocument } from 'src/challenges/schema/image.schema';
-import { ChallengesModule } from 'src/challenges/challenges.module';
 import { ChallengesService } from 'src/challenges/challenges.service';
 
 @Injectable()
 export class PostsService {
   constructor(@InjectModel(Post.name) private postModel: Model<PostDocument>,
-  @InjectModel(Image.name) private imageModel: Model<ImageDocument>,
   private readonly challengeService: ChallengesService) {}
-  // @Inject(forwardRef(() => ChallengesModule)) 
-  // 아니 이건 왜 또 쓰면 오류남? 
   
 
   async create(user: any, file : Express.Multer.File, createPostDto: CreatePostDto, id: string) {
@@ -31,12 +26,7 @@ export class PostsService {
     let createPost = await new this.postModel(createPostDto);
 
     createPost.user = user;
-
-    let image = new this.imageModel();
-    image.data = file.buffer;
-    image.contentType = file.mimetype;
-
-    createPost.Img = image;
+    createPost.img = file.path;
 
     await createPost.save();
     // 챌린지는 _id만 저장하니까..
