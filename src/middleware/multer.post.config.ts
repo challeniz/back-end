@@ -11,7 +11,7 @@ export class MulterPostConfig implements MulterOptionsFactory {
 
     
     constructor() {
-        this.dirPath = path.join(process.cwd(), 'uploads/post');
+        this.dirPath = process.env.UPLOAD_POSTS_PATH;
         //this.mkdir();
     }
 

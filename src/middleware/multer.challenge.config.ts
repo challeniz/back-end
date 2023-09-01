@@ -11,7 +11,7 @@ export class MulterChallengeConfig implements MulterOptionsFactory {
 
     
     constructor() {
-        this.dirPath = path.join(process.cwd(), 'uploads/challenges');
+        this.dirPath = process.env.UPLOAD_CHALLENGE_PATH;
         //this.mkdir();
     }
 
