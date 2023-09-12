@@ -1,9 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { IsEmail, IsPhoneNumber, IsString } from 'class-validator';
+import { IsString } from 'class-validator';
 import mongoose, { Document  } from 'mongoose';
 import { Post } from 'src/posts/schema/post.schema';
 import { User } from 'src/users/schema/user.schema';
-import { Image } from './image.schema';
 
 export type ChallengeDocument = Challenge & Document;
 
@@ -60,6 +59,9 @@ export class Challenge {
     // 인증 리스트
     @Prop({ required: false, trim: true })
     post: Array<mongoose.Schema.Types.ObjectId>[];
+
+    @Prop({ default: Date.now })
+    create_date: Date;
 }
 
 export const challengeSchema = SchemaFactory.createForClass(Challenge);

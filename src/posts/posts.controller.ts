@@ -14,4 +14,15 @@ export class PostsController {
     return this.postsService.create(req.user, file, createPostDto, id);
   }
 
+  // 나중에 challenges로 변경
+  @Get('/challenges/:id')
+  async posts(@Param('id') id:string) {
+    return this.postsService.getpost(id);
+  }
+
+  @Get('dddddddd')
+  async dddddddd() {
+    return this.postsService.findAll();
+  }
+
 }

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Request, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Request, UseInterceptors, UploadedFile, Query } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ChallengesService } from './challenges.service';
 import { CreateChallengeDto } from './dto/create-challenge.dto';
@@ -73,6 +73,19 @@ export class ChallengesController {
   @Patch('/cancel/:id')
   async cancel(@Request() req, @Param('id') id: string) {
     return this.challengesService.cancel(req.user, id);
+  }
+
+  // 챌린지 포스트목록
+  @Get('/posts/:id')
+  async posts(@Param('id') id:string) {
+    return this.challengesService.getpost(id);
+  }
+
+  // 챌린지 검색
+  @Get('/list/search')
+  async searchC(@Query('title') title: string) {
+
+    return this.challengesService.searchChallenge(title);
   }
 
 }

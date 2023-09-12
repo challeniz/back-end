@@ -26,15 +26,34 @@ export class PostsService {
     let createPost = await new this.postModel(createPostDto);
 
     createPost.user = user;
-    createPost.img = file.path;
+    const tmp = file.path.split("/");
+   const path = "/" + tmp[5] + "/"+tmp[6];
 
     await createPost.save();
     // 챌린지는 _id만 저장하니까..
     return await this.challengeService.postAdd( id , createPost);
   }
+  
+  async getpost(id: string) {
+    let challenge = await this.challengeService.findById(id);
+
+    if(!challenge) {
+      throw new NotFoundException("찾는 챌린지가 존재하지 않습니다. 다시 확인해 주세요.");
+    }
+
+    const posts = [];
+
+    for(let i = 0; i<challenge.post.length; i++) {
+      posts.push(await this.postModel.findOne({ _id: challenge.post[i]}));
+    }
+
+    return posts;
+  }
 
   findAll() {
-    return `This action returns all posts`;
+    let dd = '/home/elice/front-end/public/posts/EAT_green_1693586742270.jpg';
+    let aa = dd.split("/");
+    return "/"+aa[5]+"/"+aa[6];
   }
 
   findOne(id: number) {

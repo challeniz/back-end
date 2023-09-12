@@ -1,8 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { IsString } from "class-validator";
 import mongoose from "mongoose";
-import { Challenge } from "src/challenges/schema/challenge.schema";
-import { Image } from "src/challenges/schema/image.schema";
 import { User } from "src/users/schema/user.schema";
 
 export type PostDocument = Post & Document;

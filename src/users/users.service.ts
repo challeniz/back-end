@@ -47,12 +47,19 @@ export class UsersService {
   }
 
   async mypageChall(user: any) {
-    const challenge = await this.challengeService.findByUser(user.id);
+    let challenge = await this.challengeService.findByUser(user.id);
+    // 신청한 챌린지중에서 상태만 나눔
+    const finishChallenge = challenge.filter((ele) => ele.status == "완료");
+    challenge = challenge.filter((ele) => ele.status != "완료");
+    // 찜한 것
     const zzimChallenge = await this.challengeService.findByZzimList(user.id);
+    // 내가 만든것
+    const createChallenge = await this.challengeService.getCreateChallenge(user.id);
+    
 
     const { name, grade } = user;
 
-    return { challenge, zzimChallenge, name, grade };
+    return { challenge, zzimChallenge, createChallenge, finishChallenge ,name, grade };
   }
 
   async remove(user: any) {

@@ -5,12 +5,11 @@ import { Challenge, challengeSchema } from './schema/challenge.schema';
 import { MongooseModule } from '@nestjs/mongoose';
 import { RequiredMiddleware } from 'src/middleware/requierd.middleware';
 import { UsersModule } from 'src/users/users.module';
-import { Image, imageSchema } from './schema/image.schema';
 import { MulterModule } from '@nestjs/platform-express';
 import { MulterChallengeConfig } from 'src/middleware/multer.challenge.config';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: Challenge.name, schema: challengeSchema }, { name: Image.name, schema: imageSchema }]),
+  imports: [MongooseModule.forFeature([{ name: Challenge.name, schema: challengeSchema }, ]),
   forwardRef(() => UsersModule),  MulterModule.registerAsync({ useClass: MulterChallengeConfig })],
   
   controllers: [ChallengesController],

@@ -1,10 +1,11 @@
-import mongoose, { Model, ObjectId, Types } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { forwardRef, HttpException, HttpStatus, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Challenge, ChallengeDocument } from './schema/challenge.schema';
 import { CreateChallengeDto } from './dto/create-challenge.dto';
 import { UpdateChallengeDto } from './dto/update-challenge.dto';
 import { UsersService } from 'src/users/users.service';
+
 
 @Injectable()
 export class ChallengesService {
@@ -15,18 +16,21 @@ export class ChallengesService {
     let createChall = await new this.challengeModel(createChallengeDto);
     createChall.user = user._id;
     
-    createChall.mainImg = file.path;
+    const ddd = file.path.split("/");
+    const path = "/" + ddd[6] + "/" + ddd[7];
+    createChall.mainImg = path;
+    
     const result = await createChall.save();
 
     return result;
   }
   
   async findAll() {
-    const ongoingChallenge = await this.challengeModel.find({ "status": "진행 중" }).limit(4);
+    const ongoingChallenge = await this.challengeModel.find({ "status": "진행 중" }).limit(8);
 
-    const orderByUsersChallenge = await this.challengeModel.find({ "status": "모집 중" }).sort({ "users": -1 }).limit(4);
+    const orderByUsersChallenge = await this.challengeModel.find({ "status": "모집 중" }).sort({ "users": -1 }).limit(8);
 
-    let orderByDateChallenge = await this.challengeModel.find({ "status": "모집 중" }).limit(4);
+    let orderByDateChallenge = await this.challengeModel.find({ "status": "모집 중" }).sort({"recru_open_date": 1}).limit(8);
     orderByDateChallenge.reverse();
 
     return { ongoingChallenge, orderByUsersChallenge, orderByDateChallenge }
@@ -48,7 +52,7 @@ export class ChallengesService {
   }
 
   async findList() {
-    const challenge = await this.challengeModel.find({}).limit(8);
+    const challenge = await this.challengeModel.find({});
 
     return challenge;
   }
@@ -219,4 +223,31 @@ export class ChallengesService {
 
     return await challenge.save();;
   }
+
+  // 챌린지 인증 목록 가져오기
+  async getpost( id: string) {
+    const challenge = await this.challengeModel.findById(id);
+
+    if(!challenge) {
+      throw new NotFoundException("찾는 챌린지가 존재하지 않습니다. 다시 확인해 주세요.");
+    }
+
+    return challenge;
+  }
+  
+  // 챌린지 검색
+  async searchChallenge( title: string) {
+    const challenge = await this.challengeModel.find({ title: {$regex: `${title}`} });
+
+
+    return challenge;
+  }
+
+  // 개설한 챌린지 검색
+  async getCreateChallenge( id: string) {
+    const created = await this.challengeModel.find({ "user": id });
+
+    return created;
+  }
+  
 }
