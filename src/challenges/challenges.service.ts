@@ -221,7 +221,7 @@ export class ChallengesService {
 
     challenge.post.push(createPost._id);
 
-    return await challenge.save();;
+    return await challenge.save();
   }
 
   // 챌린지 인증 목록 가져오기
@@ -248,6 +248,23 @@ export class ChallengesService {
     const created = await this.challengeModel.find({ "user": id });
 
     return created;
+  }
+
+  async createReview(id: string, createdReview) {
+    let challenge = await this.challengeModel.findById(id);
+
+    if(!challenge) {
+      throw new NotFoundException("찾는 챌린지가 존재하지 않습니다. 다시 확인해 주세요.");
+    }
+
+    // 신청한 사람이 아니면 에러
+    if(!challenge.users.includes(createdReview.user._id)) {
+      throw new HttpException("신청한 사람이 아니므로 후기를 작성할 수 없습니다.", HttpStatus.BAD_REQUEST);
+    }
+
+    challenge.review.push(createdReview._id);
+
+    return await challenge.save();
   }
   
 }

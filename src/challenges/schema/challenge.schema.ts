@@ -3,6 +3,7 @@ import { IsString } from 'class-validator';
 import mongoose, { Document  } from 'mongoose';
 import { Post } from 'src/posts/schema/post.schema';
 import { User } from 'src/users/schema/user.schema';
+import { Review } from '../../review/schema/review.schema';
 
 export type ChallengeDocument = Challenge & Document;
 
@@ -62,6 +63,10 @@ export class Challenge {
 
     @Prop({ default: Date.now })
     create_date: Date;
+
+    //후기
+    @Prop({ required: false })
+    review: Array<Review>[];
 }
 
 export const challengeSchema = SchemaFactory.createForClass(Challenge);

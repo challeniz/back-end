@@ -21,7 +21,7 @@ export class User {
     @Prop({ required: true, trim: true })
     phone: string;
 
-    @Prop({ required: true, trim: true, default: '신입챌리니즈'})
+    @Prop({ required: true, trim: true, default: '신입챌리니'})
     grade: string;
 
     @Prop({ required: true, trim: true, default: false })
