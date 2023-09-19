@@ -30,7 +30,7 @@ export class User {
     @Prop({ required: true, trim: true, default: new Date(), type: mongoose.Schema.Types.Date })
     reg_date: Date;
 
-    @Prop({ required: false, trim: true })
+    @Prop({ required: false, trim: true, default: "/users/--3.png" })
     img: string;
 
 }

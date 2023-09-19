@@ -57,6 +57,7 @@ export class ChallengesService {
     return challenge;
   }
 
+
   async findByUser(id: string) {
     return await this.challengeModel.find({ "users": `${id}` });
   }

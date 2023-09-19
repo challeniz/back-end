@@ -8,20 +8,15 @@ export class ReviewController {
   constructor(private readonly reviewService: ReviewService) {}
 
   // 후기 쓰기
-  @Post('/:id')
-  async createReview(@Request() req, @Param('id') id: string, @Body() createReviewdto: CreateReviewDto ) {
-    return this.reviewService.createReview(req.user, id, createReviewdto);
+  @Post('')
+  async createReview(@Request() req, @Body() createReviewdto: CreateReviewDto ) {
+    return this.reviewService.createReview(req.user, createReviewdto);
   }
 
-  // 내가 쓴 리뷰?
-  @Get()
-  findAll() {
-    return this.reviewService.findAll();
-  }
-
+  // 특정 챌린지 전체 리뷰보기
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.reviewService.findOne(+id);
+  async getReview(@Param('id') id: string) {
+    return this.reviewService.getReview(id);
   }
 
   @Patch(':id')
