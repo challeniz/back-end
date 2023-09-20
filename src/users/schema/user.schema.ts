@@ -33,6 +33,8 @@ export class User {
     @Prop({ required: false, trim: true, default: "/users/--3.png" })
     img: string;
 
+    @Prop({ required: true, trim: true, default: 0})
+    verifiCount: number;
 }
 
 export const userSchema = SchemaFactory.createForClass(User);

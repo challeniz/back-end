@@ -78,4 +78,24 @@ export class UsersService {
 
     return findUser;
   }
+
+  async verfiCountPlus(id: string) {
+    const user = await this.userModel.findById(id);
+
+    const count = user.verifiCount+1;
+
+    if(count > 14 && count < 30) {
+      user.grade = "주니어챌리니";
+    } else if( count >= 30 && count < 50) {
+      user.grade = "시니어챌리니";
+    } else if(count > 50) {
+      user.grade = "전문챌리니";
+    }
+
+    await this.userModel.updateOne({ _id: id }, { $set: user });
+
+    const findUser = this.userModel.findById(user._id);
+
+    return findUser;
+  }
 }

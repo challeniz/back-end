@@ -1,4 +1,4 @@
-import { Model, Types } from 'mongoose';
+import mongoose, { Model, Types } from 'mongoose';
 import { forwardRef, HttpException, HttpStatus, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Challenge, ChallengeDocument } from './schema/challenge.schema';
@@ -30,16 +30,21 @@ export class ChallengesService {
 
     const orderByUsersChallenge = await this.challengeModel.find({ "status": "모집 중" }).sort({ "users": -1 }).limit(8);
 
-    let orderByDateChallenge = await this.challengeModel.find({ "status": "모집 중" }).sort({"recru_open_date": 1}).limit(8);
+    let orderByDateChallenge = await this.challengeModel.find({ "status": "모집 중" }).sort({"create_date": 1}).limit(8);
     orderByDateChallenge.reverse();
 
     return { ongoingChallenge, orderByUsersChallenge, orderByDateChallenge }
   }
 
-  
-  // 신청한 사람
   async findById(id: string) {
     const challenge = await this.challengeModel.findById(id);
+
+    return challenge;
+  }
+
+  // userid로 신청한거나 만든 거 둘 다 찾기
+  async findByUserIdAll(user: any) { // user 아이디
+    const challenge = await this.challengeModel.find({$or: [ {"user": user._id}, {"users": {$in: [user._id]}}]});
 
     return challenge;
   }
@@ -62,6 +67,7 @@ export class ChallengesService {
     return await this.challengeModel.find({ "users": `${id}` });
   }
 
+  
   async findOne(id: string) {
     let challenge = await this.challengeModel.findById(id);
 
@@ -71,6 +77,7 @@ export class ChallengesService {
 
     return { challenge, name, count };
   }
+  
 
   async update(user:any, id: string, updateChallengeDto: UpdateChallengeDto, file: Express.Multer.File) {
     const now = new Date();
@@ -213,7 +220,7 @@ export class ChallengesService {
 
 
   // 인증 추가
-  async postAdd( id: string, createPost) {
+  async postAdd( id: string, createPost, user: any) {
     let challenge = await this.challengeModel.findById(id);
 
     if(!challenge) {
@@ -221,6 +228,8 @@ export class ChallengesService {
     }
 
     challenge.post.push(createPost._id);
+
+    await this.usersService.verfiCountPlus(user._id);
 
     return await challenge.save();
   }
@@ -258,6 +267,7 @@ export class ChallengesService {
       throw new NotFoundException("찾는 챌린지가 존재하지 않습니다. 다시 확인해 주세요.");
     }
 
+
     // 신청한 사람이 아니면 에러
     if(!challenge.users.includes(createdReview.user._id)) {
       throw new HttpException("신청한 사람이 아니므로 후기를 작성할 수 없습니다.", HttpStatus.BAD_REQUEST);
@@ -266,6 +276,20 @@ export class ChallengesService {
     challenge.review.push(createdReview._id);
 
     return await challenge.save();
+  }
+
+  async removeReview(id: string, reviewId: any){
+    const challenge = await this.challengeModel.findById(id);
+
+    if(!challenge) {
+      throw new NotFoundException("찾는 챌린지가 존재하지 않습니다. 다시 확인해 주세요.");
+    }
+    reviewId = new mongoose.Types.ObjectId(reviewId);
+    challenge.review = challenge.review.filter((ele) => !reviewId.equals(new Types.ObjectId(`${ele}`)) );
+
+    await challenge.save();
+
+    return "리뷰 삭제 완료";
   }
   
 }

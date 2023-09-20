@@ -19,6 +19,7 @@ import { MulterPostConfig } from 'src/middleware/multer.post.config';
 export class PostsModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(RequiredMiddleware).forRoutes({ path: 'posts/upload/:id', method: RequestMethod.POST }, 
+    { path: 'posts', method: RequestMethod.GET }
     );
   }
 }

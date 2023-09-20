@@ -88,9 +88,4 @@ export class ChallengesController {
     return this.challengesService.searchChallenge(title);
   }
 
-  @Get("/dddddddddddd")
-  async testtt(@Request() req) {
-    
-  }
-
 }

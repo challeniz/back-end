@@ -11,18 +11,19 @@ export class PostsController {
   @Post('/upload/:id')  // challenge의 id
   @UseInterceptors(FileInterceptor('file'))
   async create(@Request() req, @UploadedFile() file: Express.Multer.File, @Body() createPostDto : CreatePostDto, @Param('id') id: string) {
+
     return this.postsService.create(req.user, file, createPostDto, id);
   }
 
-  // 나중에 challenges로 변경
   @Get('/challenges/:id')
   async posts(@Param('id') id:string) {
     return this.postsService.getpost(id);
-  }
+  }   
 
-  @Get('dddddddd')
-  async dddddddd() {
-    return this.postsService.findAll();
+  // 내 인증 보기
+  @Get()
+  async myPosts(@Request() req) {
+    return this.postsService.mypost(req.user);
   }
 
 }
