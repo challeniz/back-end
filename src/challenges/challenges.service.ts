@@ -5,12 +5,14 @@ import { Challenge, ChallengeDocument } from './schema/challenge.schema';
 import { CreateChallengeDto } from './dto/create-challenge.dto';
 import { UpdateChallengeDto } from './dto/update-challenge.dto';
 import { UsersService } from 'src/users/users.service';
+import { BadgesService } from 'src/badges/badges.service';
 
 
 @Injectable()
 export class ChallengesService {
   constructor(@InjectModel(Challenge.name) private challengeModel: Model<ChallengeDocument>,
-  @Inject(forwardRef(() => UsersService)) private readonly usersService: UsersService) {}
+  @Inject(forwardRef(() => UsersService)) private readonly usersService: UsersService,
+  private readonly badgesService: BadgesService) {}
 
   async create(user: any, createChallengeDto: CreateChallengeDto, file: Express.Multer.File) {
     let createChall = await new this.challengeModel(createChallengeDto);
@@ -79,7 +81,7 @@ export class ChallengesService {
   }
   
 
-  async update(user:any, id: string, updateChallengeDto: UpdateChallengeDto, file: Express.Multer.File) {
+  async update(user:any, id: string, updateChallengeDto: UpdateChallengeDto, file?: Express.Multer.File) {
     const now = new Date();
     const challenge = await this.challengeModel.findById(id);
 
@@ -104,6 +106,12 @@ export class ChallengesService {
     
     challenge.description = updateChallengeDto.description;
     challenge.tag = updateChallengeDto.tag;
+
+    if(file) {
+      const tmp = file.path.split("/");
+      const path = "/" + tmp[6] + "/" + tmp[7];
+      challenge.mainImg = path;
+    }
 
     const result = await challenge.save();
 
@@ -163,9 +171,10 @@ export class ChallengesService {
     }
 
     challenge.users.push(user);
-    const result = await challenge.save();
 
-    return result;
+    await this.badgesService.subBadge(user);
+
+    return await challenge.save();;
   }
 
   async zzim(user: any, id: string): Promise<string> {

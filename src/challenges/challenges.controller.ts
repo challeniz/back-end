@@ -38,7 +38,7 @@ export class ChallengesController {
   // 챌린지 수정
   @Patch(':id')
   @UseInterceptors(FileInterceptor('file'))
-  async update(@Request() req, @Param('id') id: string, @Body() updateChallengeDto: UpdateChallengeDto, @UploadedFile() file: Express.Multer.File) {
+  async update(@Request() req, @Param('id') id: string, @Body() updateChallengeDto: UpdateChallengeDto, @UploadedFile() file?: Express.Multer.File) {
     return this.challengesService.update(req.user, id, updateChallengeDto, file);
   }
 

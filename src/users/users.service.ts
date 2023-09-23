@@ -5,11 +5,13 @@ import { User, UserDocument } from './schema/user.schema';
 import * as bcrypt from 'bcrypt';
 import { ChallengesService } from 'src/challenges/challenges.service';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { BadgesService } from 'src/badges/badges.service';
 
 @Injectable()
 export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>,
-  @Inject(forwardRef(() => ChallengesService)) private readonly challengeService: ChallengesService) {}
+  @Inject(forwardRef(() => ChallengesService)) private readonly challengeService: ChallengesService,
+  @Inject(forwardRef(() => BadgesService)) private readonly badgesService: BadgesService) {}
 
   async create(user: User) {
     const isEmail = user.email;
@@ -22,9 +24,12 @@ export class UsersService {
 
     let createdUser = new this.userModel(user);
     createdUser.password =  await bcrypt.hash(createdUser.password, 10);
-    createdUser.save()
 
-    return '회원가입 완료'; // 회원 가입 완료만 리턴?
+    const result = await createdUser.save();
+
+    await this.badgesService.createBadgeList(result);
+    
+    return "회원 가입 완료"; // 회원 가입 완료만 리턴?
   }
 
   async doubleCheck(email: string) {
