@@ -76,12 +76,18 @@ export class BadgesService {
     if(badgeList.list[2].obtain === false) {
       badgeList.list[2]= {
         ...badgeList.list[2],
+        count: 1,
         obtain: true
       }
       await badgeList.save();
     }
 
-    return "이미 획득한 배지입니다.";
+    badgeList.list[2] = {
+      ...badgeList.list[2],
+      //count: badgeList.list[2].count+1;
+    }
+
+    return await badgeList.save();
   }
 
 }

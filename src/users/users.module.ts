@@ -8,13 +8,14 @@ import { RequiredMiddleware } from 'src/middleware/requierd.middleware';
 import { JwtModule } from '@nestjs/jwt';
 import { ChallengesModule } from 'src/challenges/challenges.module';
 import { BadgesModule } from 'src/badges/badges.module';
+import { PostsModule } from 'src/posts/posts.module';
 
 @Module({
   imports: [MongooseModule.forFeature([{ name: User.name, schema: userSchema}]),
   forwardRef(() => AuthModule), JwtModule.register({
     secret: process.env.JWT_SECRET_KEY,
     signOptions: { expiresIn: '1y' },
-  }), forwardRef(() => ChallengesModule), forwardRef(() => BadgesModule)
+  }), forwardRef(() => ChallengesModule), forwardRef(() => BadgesModule,), forwardRef(() => PostsModule),
   ],
   controllers: [UsersController],
   providers: [UsersService],

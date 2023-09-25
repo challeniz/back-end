@@ -14,6 +14,7 @@ import { MulterPostConfig } from 'src/middleware/multer.post.config';
    forwardRef(()=> UsersModule), forwardRef(()=> ChallengesModule), MulterModule.registerAsync({ useClass: MulterPostConfig })],
   controllers: [PostsController],
   providers: [PostsService],
+  exports: [PostsService]
 })
 
 export class PostsModule implements NestModule {

@@ -15,7 +15,7 @@ export class Post {
     @Prop({ required: true, trim: true })
     description: string;
 
-    @Prop({ required: true, trim: true, default: new Date(), type: mongoose.Schema.Types.Date })
+    @Prop({ required: true, trim: true, default: Date.now() + (9*3600000), type: mongoose.Schema.Types.Date })
     post_date: Date;
 
     @Prop({ required: true })

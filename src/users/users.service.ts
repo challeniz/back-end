@@ -6,12 +6,14 @@ import * as bcrypt from 'bcrypt';
 import { ChallengesService } from 'src/challenges/challenges.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { BadgesService } from 'src/badges/badges.service';
+import { PostsService } from 'src/posts/posts.service';
 
 @Injectable()
 export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>,
   @Inject(forwardRef(() => ChallengesService)) private readonly challengeService: ChallengesService,
-  @Inject(forwardRef(() => BadgesService)) private readonly badgesService: BadgesService) {}
+  @Inject(forwardRef(() => BadgesService)) private readonly badgesService: BadgesService,
+  private readonly postsService: PostsService) {}
 
   async create(user: User) {
     const isEmail = user.email;
@@ -52,19 +54,45 @@ export class UsersService {
   }
 
   async mypageChall(user: any) {
-    let challenge = await this.challengeService.findByUser(user.id);
+    const challenge: any = await this.challengeService.findByUser(user.id);
     // 신청한 챌린지중에서 상태만 나눔
     const finishChallenge = challenge.filter((ele) => ele.status == "완료");
-    challenge = challenge.filter((ele) => ele.status != "완료");
+    const activeChallenge = challenge.filter((ele) => ele.status != "완료");
+
+    // 오늘 날짜에 작성한 포스트가 있는지 확인하여 리턴
+    const updateChallenge = async (chall) => {
+      if(chall.post.length <= 0) {
+        return { ...chall, isPost: false };
+      }
+
+      let isPostFound = false;
+      const posts = await this.postsService.getpost(chall._id);
+      const now: Date = new Date();
+      now.setHours(now.getHours() + 9);
+      for(const post of posts) {
+        const pdate = new Date(post.post_date);
+        if(post.user._id.equals(user._id) && now.getFullYear() === pdate.getFullYear()
+        && now.getMonth() === pdate.getMonth()
+        && now.getDate() === pdate.getDate()) {
+          isPostFound = true;
+          break;
+        }
+      }
+      return { ...chall, isPost: isPostFound };
+    };
+
+    const updateActiveChallenge = await Promise.all(activeChallenge.map(updateChallenge));
+    
     // 찜한 것
     const zzimChallenge = await this.challengeService.findByZzimList(user.id);
     // 내가 만든것
     const createChallenge = await this.challengeService.getCreateChallenge(user.id);
+    const updateCreateChallenge = await Promise.all(createChallenge.map(updateChallenge));
     
 
     const { name, grade } = user;
 
-    return { challenge, zzimChallenge, createChallenge, finishChallenge ,name, grade };
+    return { updateActiveChallenge, zzimChallenge, updateCreateChallenge, finishChallenge , name, grade };
   }
 
   async remove(user: any) {

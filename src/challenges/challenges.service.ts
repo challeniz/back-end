@@ -66,7 +66,7 @@ export class ChallengesService {
 
 
   async findByUser(id: string) {
-    return await this.challengeModel.find({ "users": `${id}` });
+    return await this.challengeModel.find({ "users": `${id}` }, {}, {lean: true});
   }
 
   
@@ -264,7 +264,7 @@ export class ChallengesService {
 
   // 개설한 챌린지 검색
   async getCreateChallenge( id: string) {
-    const created = await this.challengeModel.find({ "user": id });
+    const created = await this.challengeModel.find({ "user": id }, {}, { lean: true });
 
     return created;
   }
