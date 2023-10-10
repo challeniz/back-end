@@ -18,7 +18,6 @@ export class RequiredMiddleware implements NestMiddleware {
 
         try {
             const decoded = this.jwtService.verify(token);
-
             const user = await this.usersService.findById(decoded.sub);
 
             if(user) {

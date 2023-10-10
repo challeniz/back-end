@@ -21,7 +21,7 @@ export class PostsController {
   }   
 
   // 내 인증 보기
-  @Get()
+  @Get('/my')
   async myPosts(@Request() req) {
     return this.postsService.mypost(req.user);
   }

@@ -8,11 +8,13 @@ import { UsersModule } from 'src/users/users.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { MulterChallengeConfig } from 'src/middleware/multer.challenge.config';
 import { BadgesModule } from 'src/badges/badges.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [MongooseModule.forFeature([{ name: Challenge.name, schema: challengeSchema }, ]),
   forwardRef(() => UsersModule), forwardRef(() => BadgesModule),
-  MulterModule.registerAsync({ useClass: MulterChallengeConfig })],
+  MulterModule.registerAsync({ useClass: MulterChallengeConfig }),
+  ScheduleModule.forRoot()],
   
   controllers: [ChallengesController],
   providers: [ChallengesService],

@@ -7,6 +7,8 @@ import { ChallengesService } from 'src/challenges/challenges.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { BadgesService } from 'src/badges/badges.service';
 import { PostsService } from 'src/posts/posts.service';
+import { ObjectId } from 'typeorm';
+import { LoginUserDto } from './dto/login-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -32,6 +34,12 @@ export class UsersService {
     await this.badgesService.createBadgeList(result);
     
     return "회원 가입 완료"; // 회원 가입 완료만 리턴?
+  }
+
+  async logout(user: any) {
+    const isUser = await this.userModel.findById(user._id);
+
+    await this.userModel.updateOne({ _id: isUser._id, $set: { refreshToken: null, refreshTokenDate: null }});
   }
 
   async doubleCheck(email: string) {
@@ -67,9 +75,15 @@ export class UsersService {
 
       let isPostFound = false;
       const posts = await this.postsService.getpost(chall._id);
+
       const now: Date = new Date();
       now.setHours(now.getHours() + 9);
+
       for(const post of posts) {
+        // 새로 만들고 난후 삭제
+        if( post == null) {
+          continue;
+        }
         const pdate = new Date(post.post_date);
         if(post.user._id.equals(user._id) && now.getFullYear() === pdate.getFullYear()
         && now.getMonth() === pdate.getMonth()
@@ -116,6 +130,7 @@ export class UsersService {
     const user = await this.userModel.findById(id);
 
     const count = user.verifiCount+1;
+    user.verifiCount = count;
 
     if(count > 14 && count < 30) {
       user.grade = "주니어챌리니";
@@ -131,4 +146,31 @@ export class UsersService {
 
     return findUser;
   }
+
+  async setRefreshToken(refreshToken: string, loginUserDto: LoginUserDto) {
+    const curRefreshToken = await bcrypt.hash(refreshToken, 10);
+
+    const now = new Date();
+    const curRefreshTokenDate = new Date(now.getTime()+(9*3600000));
+    curRefreshTokenDate.setHours(curRefreshTokenDate.getHours() + 1);
+    console.log(curRefreshTokenDate);
+
+    return await this.userModel.updateOne({ email: loginUserDto.email,
+       $set: { refreshToken: curRefreshToken, refreshTokenDate: curRefreshTokenDate }});
+  }
+
+  async userRefreshTokenMatch(refresh_token: string, userId) {
+    const user = await this.userModel.findById(userId);
+
+    if (!user.refreshToken) {
+      return null;
+    }
+	
+    const refreshTokenMatch = await bcrypt.compare(refresh_token, user.refreshToken);
+
+    if (refreshTokenMatch) {
+      return user;
+    } 
+  }
+
 }

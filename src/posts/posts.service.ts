@@ -57,24 +57,42 @@ export class PostsService {
   }
 
   async mypost(user: any) {
-    const challenge = await this.challengeService.findByUserIdAll(user);
+    const challenges = await this.challengeService.findByUserIdAll(user);
+    
+    let posts = []
 
-    let challPost = [];
-    challenge.forEach(chall => challPost.push({ title: chall.title, posts: chall.post }));
-
-    const posts = [];
-
-    for(const chall of challPost) {
-      if(chall.posts.length > 0) {
-        for(const post of chall.posts) {
+    for(const challenge of challenges) {
+      if(challenge.post.length > 0) {
+        const challengePost = {
+          title: challenge.title,
+          recru_open_date: challenge.recru_open_date,
+          recru_end_date: challenge.recru_end_date,
+          start_date: challenge.start_date,
+          end_date: challenge.end_date,
+          posts: []
+        };
+        for(const post of challenge.post) {
           const ispost = await this.postModel.findById(post);
+
+          // 이건 나중에 다 삭제하고 다시 만든 후 삭제
+          if(ispost == null) {
+            continue;
+          }
+          
           if (user.email == ispost.user.email) {
-            posts.push({ title: chall.title, posts: ispost });
-            console.log(posts);
+            challengePost.posts.push(ispost);
          }
         } 
+        posts.push(challengePost);
       } else {
-        posts.push(chall);
+        posts.push({
+          title: challenge.title,
+          recru_open_date: challenge.recru_open_date,
+          recru_end_date: challenge.recru_end_date,
+          start_date: challenge.start_date,
+          end_date: challenge.end_date,
+          posts: []
+        });
       }
     }
 

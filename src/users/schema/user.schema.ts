@@ -35,6 +35,12 @@ export class User {
 
     @Prop({ required: true, trim: true, default: 0})
     verifiCount: number;
+
+    @Prop({ required: false, trim: true })
+    refreshToken: string;
+
+    @Prop({ required: false, trim: true })
+    refreshTokenDate: Date;
 }
 
 export const userSchema = SchemaFactory.createForClass(User);

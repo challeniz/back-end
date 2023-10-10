@@ -88,4 +88,9 @@ export class ChallengesController {
     return this.challengesService.searchChallenge(title);
   }
 
+  @Get('/aaaaa/eeee')
+  async aa() {
+
+    return this.challengesService.updateChallengeState();
+  }
 }

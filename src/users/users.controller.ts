@@ -25,8 +25,10 @@ export class UsersController {
   // 로그인
   @Post('/login')
   async login(@Body() loginUserDto: LoginUserDto) {
+    const tokens = await this.authService.jwtLogin(loginUserDto);
+    const result = this.usersService.setRefreshToken(tokens.refresh_token, loginUserDto);
 
-    return this.authService.jwtLogin(loginUserDto);
+    return tokens;
   }
 
   // 회원 탈퇴
@@ -56,5 +58,17 @@ export class UsersController {
     
     return this.usersService.updateInfo(req.user, updateUserDto);
   }
-  
+
+  @Patch('/logout') 
+  async logout(@Request() req) {
+    this.usersService.logout(req.user);
+
+    return "로그아웃 완료";
+  }
+
+  // refresh 토큰? 줄수있나
+  @Patch('/refresh')
+  async refresh(@Request() req) {
+    return this.authService.refresh(req.refresh_token);
+  }  
 }

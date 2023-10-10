@@ -6,6 +6,7 @@ import { CreateChallengeDto } from './dto/create-challenge.dto';
 import { UpdateChallengeDto } from './dto/update-challenge.dto';
 import { UsersService } from 'src/users/users.service';
 import { BadgesService } from 'src/badges/badges.service';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 
 @Injectable()
@@ -299,6 +300,29 @@ export class ChallengesService {
     await challenge.save();
 
     return "리뷰 삭제 완료";
+  }
+
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT, { timeZone: 'Asia/Seoul'})
+  async updateChallengeState() {
+    const challenges = await this.challengeModel.find({});
+
+    for(const challenge of challenges) {
+      try {
+        if(challenge.status == "완료") {
+          continue;
+        }
+
+        const now = new Date(Date.now());
+        if (new Date(challenge.recru_end_date) <= now && new Date(challenge.start_date) <= now && 
+         new Date(challenge.end_date) > now ) {
+          await this.challengeModel.updateOne({ _id: challenge._id }, { $set: { status: "진행 중"}});
+        } else if (new Date(challenge.start_date) < now && new Date(challenge.end_date) <= now) {
+          await this.challengeModel.updateOne({ _id: challenge._id }, { $set: { status: "완료"}});
+        }
+      } catch (error) {
+        console.error(`Error updating challenge state: ${error.message}`);
+      }
+    }
   }
   
 }
