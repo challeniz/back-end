@@ -9,6 +9,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { ChallengesModule } from 'src/challenges/challenges.module';
 import { BadgesModule } from 'src/badges/badges.module';
 import { PostsModule } from 'src/posts/posts.module';
+import { MulterModule } from '@nestjs/platform-express';
+import { MulterUserConfig } from 'src/middleware/multer.user.config';
 
 @Module({
   imports: [MongooseModule.forFeature([{ name: User.name, schema: userSchema}]),
@@ -16,7 +18,7 @@ import { PostsModule } from 'src/posts/posts.module';
     secret: process.env.JWT_SECRET_KEY,
     signOptions: { expiresIn: '1y' },
   }), forwardRef(() => ChallengesModule), forwardRef(() => BadgesModule,), forwardRef(() => PostsModule),
-  ],
+  MulterModule.registerAsync({ useClass: MulterUserConfig })],
   controllers: [UsersController],
   providers: [UsersService],
   exports: [UsersService],

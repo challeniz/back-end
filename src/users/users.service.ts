@@ -115,15 +115,22 @@ export class UsersService {
     return result? "회원 탈퇴 완료" : "회원 탈퇴 실패";
   }
 
-  async updateInfo(user: any, updateUserDto: UpdateUserDto) {
+  async updateInfo(user: any, updateUserDto: UpdateUserDto, file?: Express.Multer.File) {
     const password = updateUserDto.password;
     updateUserDto.password = await bcrypt.hash(password, 10);
+    
+    if(file) {
+      const tmp = file.path.split("/");
+      const path = "/" + tmp[6] + "/" + tmp[7];
+      updateUserDto.img = path;
+    }
 
     await this.userModel.updateOne( { _id: user._id }, { $set: updateUserDto });
 
     const findUser = this.userModel.findById(user._id);
 
     return findUser;
+    
   }
 
   async verfiCountPlus(id: string) {

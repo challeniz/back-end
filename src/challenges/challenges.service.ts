@@ -257,8 +257,18 @@ export class ChallengesService {
   
   // 챌린지 검색
   async searchChallenge( title: string) {
-    const challenge = await this.challengeModel.find({ title: {$regex: `${title}`} });
-
+    //const challenge = await this.challengeModel.find({ title: {$regex: `${title}`} });
+    const challenge = await this.challengeModel.aggregate([
+      {
+        $search: {
+          index: "challSearch",
+          text: {
+            query: title,
+            path: "title"
+          }
+        }
+      }
+    ]);
 
     return challenge;
   }

@@ -1,10 +1,11 @@
-import { Controller, Get, Post, Body, Param, Request, Delete, Patch } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Request, Delete, Patch, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from './schema/user.schema';
 import { ObjectId } from 'mongoose';
 import { LoginUserDto } from './dto/login-user.dto';
 import { AuthService } from 'src/auth/auth.service';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('users')
 export class UsersController {
@@ -54,9 +55,10 @@ export class UsersController {
 
   // 회원 정보 수정
   @Patch('/mypageInfo')
-  async mypageInfoUpdate(@Request() req, @Body() updateUserDto: UpdateUserDto) {
+  @UseInterceptors(FileInterceptor('file'))
+  async mypageInfoUpdate(@Request() req, @Body() updateUserDto: UpdateUserDto, @UploadedFile() file?: Express.Multer.File) {
     
-    return this.usersService.updateInfo(req.user, updateUserDto);
+    return this.usersService.updateInfo(req.user, updateUserDto, file);
   }
 
   @Patch('/logout') 

@@ -4,4 +4,5 @@ export class UpdateUserDto {
     phone?: string;
     email?: string;
     password?: string;
+    img?: string;
 }
