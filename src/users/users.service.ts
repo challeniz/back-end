@@ -143,7 +143,7 @@ export class UsersService {
       user.grade = "주니어챌리니";
     } else if( count >= 30 && count < 50) {
       user.grade = "시니어챌리니";
-    } else if(count > 50) {
+    } else if(count >= 50) {
       user.grade = "전문챌리니";
     }
 
