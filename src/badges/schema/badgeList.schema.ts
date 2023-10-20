@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Badge } from "./badge.schema";
 import { User } from "src/users/schema/user.schema";
+import mongoose from "mongoose";
 
 export type BadgeListDocument = BadgeList & Document;
 
@@ -10,7 +11,7 @@ export class BadgeList {
     @Prop({ required: true, trim: true })
     list: Array<Badge>;
 
-    @Prop({ required: true, trim: true, ref: 'User' })
+    @Prop({type:mongoose.Schema.Types.ObjectId, ref: 'User', required: true, trim: true })
     user: User;
 
 }

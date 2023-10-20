@@ -1,13 +1,15 @@
-import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, UnauthorizedException, forwardRef } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Badge, BadgeDocument } from './schema/badge.schema';
 import { Model } from 'mongoose';
 import { BadgeList, BadgeListDocument } from './schema/badgeList.schema';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class BadgesService {
   constructor(@InjectModel(Badge.name) private badgeModel: Model<BadgeDocument>,
   @InjectModel(BadgeList.name) private badgeListModel: Model<BadgeListDocument>,
+  @Inject(forwardRef(() => UsersService)) private readonly usersService: UsersService,
   ) {}
 
   async create(user: any, name: string, file: Express.Multer.File) {
@@ -55,15 +57,18 @@ export class BadgesService {
     return await badgeList.save();
   }
 
-  async getBadgeList(user: any) {
-    const userId = user._id;
-    const badgeList = await this.badgeListModel.findOne({ "user._id": userId });
+  async getBadgeList(usera: any) {
+    const userId = usera._id;
+    const badgeList = await this.badgeListModel.findOne({ "user": userId });
 
     if(!badgeList) {
       throw new BadRequestException("유저에 해당하는 뱃지 리스트가 없습니다.");
     }
 
-    return badgeList;
+    const user = await this.usersService.findById(userId);
+    const list = badgeList.list;
+
+    return { list, user };
   }
 
   async subBadge(user: any) {
@@ -79,15 +84,33 @@ export class BadgesService {
         count: 1,
         obtain: true
       }
-      await badgeList.save();
+      return await badgeList.save();
     }
 
     badgeList.list[2] = {
       ...badgeList.list[2],
-      //count: badgeList.list[2].count+1;
+      count: badgeList.list[2].count+1
     }
 
     return await badgeList.save();
+  }
+
+  async allcategoryBadge(user: any) {
+    const badgeList = await this.badgeListModel.findOne({ "user._id": user._id });
+
+    if(!badgeList) {
+      throw new BadRequestException("유저에 해당하는 뱃지 리스트가 없습니다.");
+    }
+
+    
+  }
+
+  async reviewBadge(user: any) {
+    const badgeList = await this.badgeListModel.findOne({ "user._id": user._id });
+
+    if(!badgeList) {
+      throw new BadRequestException("유저에 해당하는 뱃지 리스트가 없습니다.");
+    }
   }
 
 }
