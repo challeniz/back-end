@@ -174,6 +174,7 @@ export class ChallengesService {
     challenge.users.push(user);
 
     await this.badgesService.subBadge(user);
+    await this.badgesService.allcategoryBadge(user);
 
     return await challenge.save();;
   }
@@ -269,6 +270,7 @@ export class ChallengesService {
         }
       }
     ]);
+
 
     return challenge;
   }

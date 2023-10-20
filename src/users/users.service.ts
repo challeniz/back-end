@@ -180,4 +180,8 @@ export class UsersService {
     } 
   }
 
+  async findsubChallenge(user: any) {
+    const challenge = await this.challengeService.findByUser(user.id);
+  }
+
 }
