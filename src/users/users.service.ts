@@ -37,7 +37,8 @@ export class UsersService {
   }
 
   async logout(user: any) {
-    const isUser = await this.userModel.findById(user._id);
+    const id = user._id;
+    const isUser = await this.userModel.findById(id);
 
     await this.userModel.updateOne({ _id: isUser._id, $set: { refreshToken: null, refreshTokenDate: null }});
   }

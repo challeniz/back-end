@@ -2,11 +2,9 @@ import { Model } from 'mongoose';
 import { forwardRef, HttpException, HttpStatus, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreatePostDto } from './dto/create-post.dto';
-import { UpdatePostDto } from './dto/update-post.dto';
 import { Post, PostDocument } from './schema/post.schema';
 import { ChallengesService } from 'src/challenges/challenges.service';
 import { UsersService } from 'src/users/users.service';
-import { time } from 'console';
 
 @Injectable()
 export class PostsService {
@@ -28,12 +26,12 @@ export class PostsService {
     
     let createPost = await new this.postModel(createPostDto);
     createPost.user = user;
+    createPost.post_date = new Date();
 
     const tmp = file.path.split("/");
 
     // 서버 디렉토리에 맞게 바꿔야함
     createPost.img = "/" + tmp[6] + "/"+tmp[7];
-
     
     await createPost.save();
     

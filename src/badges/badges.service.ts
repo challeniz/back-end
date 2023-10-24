@@ -72,7 +72,7 @@ export class BadgesService {
   }
 
   async subBadge(user: any) {
-    const badgeList = await this.badgeListModel.findOne({ "user._id": user._id });
+    const badgeList = await this.badgeListModel.findOne({ "user": user._id });
 
     if(!badgeList) {
       throw new BadRequestException("유저에 해당하는 뱃지 리스트가 없습니다.");
