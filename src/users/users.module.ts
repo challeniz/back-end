@@ -27,7 +27,7 @@ export class UsersModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(RequiredMiddleware).forRoutes({ path: 'users/mypageInfo', method: RequestMethod.GET },
     { path: 'users/mypageChall', method: RequestMethod.GET }, { path: 'users/withdrawal', method: RequestMethod.DELETE },
-    { path: 'users/mypageInfo', method: RequestMethod.PATCH }, { path: 'users/dddddddd', method: RequestMethod.GET }
+    { path: 'users/mypageInfo', method: RequestMethod.PATCH },
     );
   }
 
