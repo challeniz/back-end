@@ -7,7 +7,6 @@ import { ChallengesService } from 'src/challenges/challenges.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { BadgesService } from 'src/badges/badges.service';
 import { PostsService } from 'src/posts/posts.service';
-import { ObjectId } from 'typeorm';
 import { LoginUserDto } from './dto/login-user.dto';
 
 @Injectable()
@@ -33,7 +32,7 @@ export class UsersService {
 
     await this.badgesService.createBadgeList(result);
     
-    return "회원 가입 완료"; // 회원 가입 완료만 리턴?
+    return "회원 가입 완료"; 
   }
 
   async logout(user: any) {
@@ -78,7 +77,7 @@ export class UsersService {
       const posts = await this.postsService.getpost(chall._id);
 
       const now: Date = new Date();
-      now.setHours(now.getHours() + 9);
+      //now.setHours(now.getHours() + 9);
 
       for(const post of posts) {
         // 새로 만들고 난후 삭제
@@ -179,10 +178,6 @@ export class UsersService {
     if (refreshTokenMatch) {
       return user;
     } 
-  }
-
-  async findsubChallenge(user: any) {
-    const challenge = await this.challengeService.findByUser(user.id);
   }
 
 }

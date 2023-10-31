@@ -6,6 +6,7 @@ import mongoose, { Model } from 'mongoose';
 import { ChallengesService } from 'src/challenges/challenges.service';
 import { UsersService } from 'src/users/users.service';
 import { ObjectId } from 'typeorm';
+import { UpdateReviewDto } from './dto/update-review.dto';
 
 @Injectable()
 export class ReviewService {
@@ -44,6 +45,21 @@ export class ReviewService {
     }
 
     return reviews;
+  }
+
+  async update(user: any, id: string, updateReviewDto: UpdateReviewDto) {
+    const challenge = await this.challengeService.findById(id);
+
+    for(let i = 0; i<challenge.review.length; i++) {
+      const review: any = await this.reviewModel.findOne({ _id: challenge.review[i]});
+      
+      if(user._id.equals(review.user)) {
+        await this.reviewModel.updateOne({ user: user._id, $set: updateReviewDto});
+        break;
+      }
+    }
+
+    return await this.reviewModel.findOne({ user: user._id });
   }
 
   async remove(user: any, id: string, reviewId: string) {
