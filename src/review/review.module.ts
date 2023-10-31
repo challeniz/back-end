@@ -16,7 +16,7 @@ import { UsersModule } from 'src/users/users.module';
 export class ReviewModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(RequiredMiddleware).forRoutes({ path: 'review', method: RequestMethod.POST }, 
-    { path: 'review/:id', method: RequestMethod.DELETE },
+    { path: 'review/:id', method: RequestMethod.DELETE }, { path: 'review/:id', method: RequestMethod.PATCH }
     );
   }
 }

@@ -1,22 +1,43 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IsEmail, IsPhoneNumber, IsString } from 'class-validator';
 import mongoose, { Document  } from 'mongoose';
+import { ApiProperty } from '@nestjs/swagger';
 
 export type UserDocument = User & Document;
 
 @Schema({ versionKey: false })
 export class User {
+    @ApiProperty({
+        example: "테스트",
+        description: "사용자 이름",
+        required: true
+    })
     @IsString()
     @Prop({ required: true, trim: true })
     name: string;
 
+    @ApiProperty({
+        example: "admin@naver.com",
+        description: "사용자 이메일(아이디)",
+        required: true
+    })
     @IsEmail()
     @Prop({ required: true, trim: true })
     email: string;
 
+    @ApiProperty({
+        example: "test123123!!",
+        description: "사용자 비밀번호",
+        required: true
+    })
     @Prop({ required: true, trim: true })
     password: string;
 
+    @ApiProperty({
+        example: "01011112222",
+        description: "사용자 핸드폰 번호",
+        required: true
+    })
     @IsPhoneNumber()
     @Prop({ required: true, trim: true })
     phone: string;
