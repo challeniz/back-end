@@ -72,7 +72,7 @@
  <details>
   <summary>테이블 설계</summary>
 <p align = "left">
-  <img src = "https://github.com/challeniz/front-end/assets/133936131/d9c068e7-7e34-4ac9-bc6e-d9dfe5e79291" width = "500">
+  <img width="775" alt="설계" src="https://github.com/challeniz/back-end/assets/56951193/56798d1c-1215-4db6-bf1f-6f8998def79f">
 </p>
 
  </details>
@@ -126,7 +126,6 @@
 <br>
 
 ## 기능
-<hr>
 
 ### User
 - bcrypt를 이용한 비밀번호 암호화
@@ -147,15 +146,13 @@
 - Review GET / POST / PATCH / DELETE
 - accessToken 확인
 - 리뷰 개수 및 작성 여부에 따라 뱃지 발급
-
 <br>
 <br>
 <br>
-
 ## 기타 이슈들
 <details>
   <summary>이미지 저장 방식에 따른 timeout 발생</summary>
     <p align = "left">
-      <img src = "https://github.com/challeniz/front-end/assets/133936131/d9c068e7-7e34-4ac9-bc6e-d9dfe5e79291" width = "500">
+      <img width="1134" alt="트러블" src="https://github.com/challeniz/back-end/assets/56951193/cd8cac79-f9a8-4a8d-8700-8b6076dd9313">
     </p>
 </details>
