@@ -117,7 +117,7 @@
 ## Architecture
 <details>
   <summary>아키텍쳐</summary>
-      ![아키텍처](https://github.com/challeniz/back-end/assets/56951193/08a183cb-872b-46c5-bc37-0a2002142fa4)
+    <img alt="아키텍처" src="https://github.com/challeniz/back-end/assets/56951193/08a183cb-872b-46c5-bc37-0a2002142fa4">
 </details>
 <br>
 <br>
