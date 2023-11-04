@@ -17,7 +17,7 @@
 
 ## 🔗 배포 주소
 
-> IP 주소 : http://challeniz.mooo.com <br>
+> IP 주소 : https://challeniz.mooo.com <br>
 > 프론트 GITHUB : https://github.com/challeniz/front-end <br>
 > 백엔드 GITHUB : https://github.com/challeniz/back-end<br>
 
@@ -72,7 +72,7 @@
  <details>
   <summary>테이블 설계</summary>
 <p align = "left">
-  <img width="775" alt="설계" src="https://github.com/challeniz/back-end/assets/56951193/56798d1c-1215-4db6-bf1f-6f8998def79f">
+  <img width="775" alt="설계" src="https://github.com/challeniz/back-end/assets/56951193/e792e732-67d7-45f6-90f0-7e7775c4f5f8">
 </p>
 
  </details>
@@ -118,7 +118,7 @@
 <details>
   <summary>아키텍쳐</summary>
     <p align = "left">
-      <img src = "https://github.com/challeniz/front-end/assets/133936131/d9c068e7-7e34-4ac9-bc6e-d9dfe5e79291" width = "500">
+      ![아키텍처](https://github.com/challeniz/back-end/assets/56951193/08a183cb-872b-46c5-bc37-0a2002142fa4)
     </p>
 </details>
 <br>
@@ -149,10 +149,11 @@
 <br>
 <br>
 <br>
+
 ## 기타 이슈들
 <details>
   <summary>이미지 저장 방식에 따른 timeout 발생</summary>
     <p align = "left">
-      <img width="1134" alt="트러블" src="https://github.com/challeniz/back-end/assets/56951193/cd8cac79-f9a8-4a8d-8700-8b6076dd9313">
+      <img width="1134" alt="트러블" src="https://github.com/challeniz/back-end/assets/56951193/46a5298a-fc4e-48e3-8b63-330e3e79f881">
     </p>
 </details>
